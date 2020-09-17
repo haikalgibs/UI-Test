@@ -6,6 +6,11 @@ android {
     compileSdkVersion 29
     buildToolsVersion "29.0.3"
 
+    compileOptions {
+        sourceCompatibility 1.8
+        targetCompatibility 1.8
+    }
+
     defaultConfig {
         applicationId "org.d3if1059.mobpro2.helloworld"
         minSdkVersion 19
@@ -34,4 +39,22 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+    //view model
+    implementation 'androidx.lifecycle:lifecycle-viewmodel-ktx:2.2.0'
+    //retrofit
+    implementation 'com.squareup.retrofit2:retrofit:2.8.1'
+    implementation 'com.squareup.retrofit2:converter-moshi:2.8.1'
+
+    //moshi
+    implementation 'com.squareup.moshi:moshi:1.9.2'
+    implementation 'com.squareup.moshi:moshi-kotlin:1.9.2'
+
+    //live data
+    implementation 'androidx.lifecycle:lifecycle-livedata-ktx:2.2.0'
+
+    //recycler view
+    implementation 'androidx.recyclerview:recyclerview:1.1.0'
+
+    //MPAndroidChart
+    implementation 'com.github.PhilJay:MPAndroidChart:v3.1.0'
 }
