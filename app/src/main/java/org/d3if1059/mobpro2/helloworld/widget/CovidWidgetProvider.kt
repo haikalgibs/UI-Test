@@ -15,6 +15,15 @@ import java.util.*
 class CovidWidgetProvider : AppWidgetProvider() {
 
     companion object {
+        fun updateAllWidget(
+            context: Context, manager: AppWidgetManager,
+            ids: IntArray
+        ) {
+            for (id in ids) {
+                updateAppWidget(context, manager, id)
+            }
+        }
+
         private fun updateAppWidget(
             context: Context,
             manager: AppWidgetManager, id: Int
@@ -73,8 +82,6 @@ class CovidWidgetProvider : AppWidgetProvider() {
         ids: IntArray?
     ) {
         if (context == null || manager == null || ids == null) return
-        for (id in ids) {
-            updateAppWidget(context, manager, id)
-        }
+        updateAllWidget(context, manager, ids)
     }
 }

@@ -19,6 +19,7 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlinx.android.synthetic.main.activity_main.*
+import org.d3if1059.mobpro2.helloworld.widget.CovidWidgetService
 import org.d3if1059.mobpro2.helloworld.widget.PrefUtils
 import java.text.SimpleDateFormat
 import java.util.*
@@ -70,6 +71,7 @@ class MainActivity : AppCompatActivity() {
             override fun onValueSelected(entry: Entry?, highlight: Highlight) {
                 recyclerView.scrollToPosition(highlight.x.toInt())
             }
+
             override fun onNothingSelected() {}
         })
 
@@ -77,6 +79,7 @@ class MainActivity : AppCompatActivity() {
         viewModel.getData().observe(this, Observer {
             adapter.setData(it)
             PrefUtils.saveData(prefs, it.last())
+            CovidWidgetService.startActionUpdateUI(this)
         })
         viewModel.getStatus().observe(this, Observer { updateProgress(it) })
         viewModel.getEntries().observe(this, Observer { updateChart(it) })

@@ -29,6 +29,8 @@
                 android:resource="@xml/appwidget_info" />
         </receiver>
 
+        <service android:name=".widget.CovidWidgetService" />
+
     </application>
 
 </manifest>
