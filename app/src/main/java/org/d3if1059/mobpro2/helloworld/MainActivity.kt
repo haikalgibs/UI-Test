@@ -1,11 +1,13 @@
 package org.d3if1059.mobpro2.helloworld
 
+import android.content.SharedPreferences
 import android.os.Bundle
 import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.core.content.ContextCompat
 import androidx.lifecycle.Observer
 import androidx.lifecycle.ViewModelProvider
+import androidx.preference.PreferenceManager
 import androidx.recyclerview.widget.DividerItemDecoration
 import androidx.recyclerview.widget.RecyclerView
 import com.github.mikephil.charting.components.Legend
@@ -17,10 +19,16 @@ import com.github.mikephil.charting.formatter.ValueFormatter
 import com.github.mikephil.charting.highlight.Highlight
 import com.github.mikephil.charting.listener.OnChartValueSelectedListener
 import kotlinx.android.synthetic.main.activity_main.*
+import org.d3if1059.mobpro2.helloworld.widget.PrefUtils
 import java.text.SimpleDateFormat
 import java.util.*
 
 class MainActivity : AppCompatActivity() {
+
+    private val prefs: SharedPreferences by lazy {
+        PreferenceManager.getDefaultSharedPreferences(this)
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
@@ -62,16 +70,16 @@ class MainActivity : AppCompatActivity() {
             override fun onValueSelected(entry: Entry?, highlight: Highlight) {
                 recyclerView.scrollToPosition(highlight.x.toInt())
             }
-
             override fun onNothingSelected() {}
         })
 
-
         val viewModel = ViewModelProvider(this).get(MainViewModel::class.java)
-        viewModel.getData().observe(this, Observer { adapter.setData(it) })
+        viewModel.getData().observe(this, Observer {
+            adapter.setData(it)
+            PrefUtils.saveData(prefs, it.last())
+        })
         viewModel.getStatus().observe(this, Observer { updateProgress(it) })
         viewModel.getEntries().observe(this, Observer { updateChart(it) })
-
     }
 
     private fun updateProgress(status: ApiStatus) {
