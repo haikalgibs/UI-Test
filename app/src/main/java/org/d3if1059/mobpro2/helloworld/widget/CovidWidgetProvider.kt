@@ -5,8 +5,13 @@ import android.appwidget.AppWidgetManager
 import android.appwidget.AppWidgetProvider
 import android.content.Context
 import android.content.Intent
+import android.util.Log
 import android.widget.RemoteViews
 import androidx.preference.PreferenceManager
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.GlobalScope
+import kotlinx.coroutines.launch
+import org.d3if1059.mobpro2.helloworld.Covid19Api
 import org.d3if1059.mobpro2.helloworld.MainActivity
 import org.d3if1059.mobpro2.helloworld.R
 import java.text.SimpleDateFormat
@@ -38,6 +43,20 @@ class CovidWidgetProvider : AppWidgetProvider() {
             val date = prefs.getLong(PrefUtils.KEY_DATE, -1L)
             val data = prefs.getInt(PrefUtils.KEY_DATA, -1)
             updateUI(context, views, date, data)
+            val intentRefresh = Intent(
+                context,
+                CovidWidgetProvider::class.java
+            )
+            intentRefresh.action = AppWidgetManager.ACTION_APPWIDGET_UPDATE
+            intentRefresh.putExtra(
+                AppWidgetManager.EXTRA_APPWIDGET_IDS,
+                intArrayOf(id)
+            )
+            val pendingRefresh = PendingIntent.getBroadcast(
+                context, id,
+                intentRefresh, PendingIntent.FLAG_UPDATE_CURRENT
+            )
+            views.setOnClickPendingIntent(R.id.refreshButton, pendingRefresh)
 
             manager.updateAppWidget(id, views)
         }
@@ -82,6 +101,16 @@ class CovidWidgetProvider : AppWidgetProvider() {
         ids: IntArray?
     ) {
         if (context == null || manager == null || ids == null) return
-        updateAllWidget(context, manager, ids)
+        val prefs = PreferenceManager.getDefaultSharedPreferences(context)
+        GlobalScope.launch(Dispatchers.Main) {
+            try {
+                val result = Covid19Api.service.getData()
+                PrefUtils.saveData(prefs, result.update.harian.last())
+            } catch (e: Exception) {
+                Log.e("CovidWidgetProvider", "Error: ${e.message}")
+            } finally {
+                updateAllWidget(context, manager, ids)
+            }
+        }
     }
 }
